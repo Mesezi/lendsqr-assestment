@@ -1,0 +1,93 @@
+@import '@/styles/variables';
+
+.dashboard {
+  h2 {
+    color: $dark-blue;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+  }
+
+  .loading {
+    display: grid;
+    place-content: center;
+    height: 10rem;
+    font-size: 2rem;
+    color: $dark-blue;
+
+    svg {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .summary {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    @media (min-width: $breakpoint-md) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .summaryCard {
+    background: white;
+    border-radius: 0.25rem;
+    padding: 1.5rem;
+    border: 1px solid #213f7d0f;
+    box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.04);
+
+    h4 {
+      color: $dark-blue;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #213f7d0f;
+    }
+
+    ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.88rem;
+
+        span {
+          color: $gray;
+        }
+
+        strong {
+          color: $dark-blue;
+          font-weight: 600;
+        }
+
+        &[data-status='active'] span { color: #39cd62; }
+        &[data-status='inactive'] span { color: $gray; }
+        &[data-status='pending'] span { color: #e9b200; }
+        &[data-status='blacklisted'] span { color: $red; }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

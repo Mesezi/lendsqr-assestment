@@ -1,0 +1,151 @@
+'use client'
+import React, { FC, SVGProps, useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { AiOutlineBell, AiOutlineSearch } from 'react-icons/ai';
+import styles from './Header.module.scss';
+import { HiMenuAlt2 } from "react-icons/hi";
+import useClickOutside from '@/hooks/useClickOutside';
+import { IoCloseOutline } from 'react-icons/io5';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { FaChevronDown } from 'react-icons/fa';
+import { BriefCaseIcon, HomeIcon } from '@/components/Icons';
+import { navItems } from '@/lib/constants';
+import { IoIosLogOut } from 'react-icons/io';
+import { useRouter } from 'next/navigation';
+
+interface NavItemProps {
+  path: string;
+  icon: FC<SVGProps<SVGSVGElement>>;
+  title: string;
+}
+
+const NavItem: FC<NavItemProps> = ({ path, icon: Icon, title }) => {
+  const pathname = usePathname();
+  const isActive = pathname === path;
+
+  return (
+    <Link
+      href={path}
+      className={`${styles.navItem} ${isActive ? styles.active : ""}`}
+    >
+      <Icon className={styles.navIcon} />
+      <span className={styles.navTitle}>{title}</span>
+    </Link>
+  );
+};
+
+const MobileHeader = () => {
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false)
+  const mobileMenuRef = useRef(null)
+  const searchBarRef = useRef(null)
+  const pathname = usePathname();
+ const router = useRouter()
+
+  useClickOutside(mobileMenuRef, ()=>setOpenMenu(false))
+  useClickOutside(searchBarRef, ()=>setOpenMenu(false))
+
+  const toggleSearch = () => {
+    setIsSearchVisible(!isSearchVisible);
+  };
+
+  useEffect(()=>{
+    setOpenMenu(false)
+  }, [pathname])
+
+  return (
+    <header className={styles.mobileHeader}>
+     {openMenu && <div className={styles.menuContainer}>
+      <aside className={styles.mobileMenu} ref={mobileMenuRef}>
+
+        <div>
+        <Link href={'/dashboard'}>
+        <Image src="/assets/images/logo.png" alt="logo" width={174} height={36} />
+      </Link>
+
+      <IoIosLogOut size={22} onClick={()=>router.push('/login')}/>
+        </div>
+      
+
+      <section>
+        <a href="">Read docs</a>
+      <button className={styles.switchOrganization}>
+        <BriefCaseIcon />
+        Switch Organization
+        <FaChevronDown />
+      </button>
+
+      <nav>
+        <NavItem path={"/dashboard"} icon={HomeIcon} title={"Dashboard"} />
+
+        
+        {Object.keys(navItems).map((title) => (
+          <section key={title} className={styles.navSection}>
+            <h4>{title}</h4>
+
+            <div>
+              {navItems[title].map((item, index) => (
+                <NavItem
+                  key={index}
+                  path={item.path}
+                  icon={item.icon}
+                  title={item.title}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
+        </nav>
+      </section>
+
+    
+      
+      </aside>
+      </div> }
+      <div className={styles.logo}>
+        <Image src="/assets/images/logo.svg" alt="logo" width={174} height={36} />
+      </div>
+
+      {isSearchVisible && (
+          <form className={styles.searchForm} ref={searchBarRef}>
+            <input type="text" autoFocus className={styles.input} placeholder='Search for anything' />
+            <button type="submit">
+              <AiOutlineSearch size={24} />
+            </button>
+            <button type='button' onClick={()=> setIsSearchVisible(false)}>
+               <IoCloseOutline size={22}/>
+            </button>
+           
+          </form>
+        )}
+
+
+{!isSearchVisible &&  <div className={styles.info}>
+
+        <button className={styles.notificationBell}>
+          <AiOutlineBell size={24} />
+        </button>
+
+
+        <button className={styles.searchToggle} onClick={toggleSearch}>
+          <AiOutlineSearch size={24} />
+        </button>
+
+       
+
+        <button className={styles.profile}>
+          <Image src="/assets/images/avatar.png" className={styles.userProfileImage} alt="User Avatar" width={40} height={40} />
+        </button>
+
+        <button onClick={()=> setOpenMenu(!openMenu)}>
+            <HiMenuAlt2 size={24}/>
+        </button> 
+
+     
+      </div>}
+    </header>
+  );
+};
+
+export default MobileHeader;
