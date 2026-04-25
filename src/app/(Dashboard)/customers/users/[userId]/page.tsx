@@ -12,7 +12,6 @@ import styles from "./UserDetails.module.scss";
 import GeneralDetails from "./components/GeneralDetails";
 import { useRouter } from "next/navigation";
 import { User } from "@/types";
-import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const tabOptions = [
@@ -28,18 +27,9 @@ const page = ({ params }: { params: { userId: string } }) => {
   const [view, setView] = useState("general details");
   const router = useRouter();
 
-  const fetchUserDetails = async ()=>{
-    try {
-      const response = await getUserDetails(params.userId);
-      return response;
-    } catch (err) {
-      toast.error("Error getting data");
-    }
-  }
-
   const { data, isLoading, isError } = useQuery<User>({
     queryKey: ["user-details", params.userId],
-    queryFn: () => fetchUserDetails(),
+    queryFn: () => getUserDetails(params.userId),
   });
 
   const UserTierIcons = ({ tier }: {tier:number}) => {
